@@ -1,10 +1,5 @@
 /* =========================
-   🌍 SKY RADIO FULL ENGINE
-   空島電台完整版（可運行）
-========================= */
-
-/* =========================
-   🌍 世界狀態
+   🌍 SKY RADIO MAP ENGINE
 ========================= */
 
 const worldState = {
@@ -14,164 +9,86 @@ const worldState = {
   sea: { name: "沙灘島", stability: 78 }
 };
 
-/* =========================
-   ⏳ 空島時間系統
-   1天 = 20小時
-   1小時 = 65分鐘
-========================= */
-
+/* 空島時間 */
 const SKY_HOUR_MIN = 65;
-const SKY_DAY_HOURS = 20;
+const SKY_DAY = 20 * SKY_HOUR_MIN;
 
 function getSkyTime() {
   const now = new Date();
+  const m = now.getHours() * 60 + now.getMinutes();
 
-  const earthMinutes = now.getHours() * 60 + now.getMinutes();
-  const skyDayMinutes = SKY_HOUR_MIN * SKY_DAY_HOURS; // 1300
+  const t = m % SKY_DAY;
 
-  const normalized = earthMinutes % skyDayMinutes;
-
-  const hour = Math.floor(normalized / SKY_HOUR_MIN);
-  const minute = Math.floor(normalized % SKY_HOUR_MIN);
-
-  return { hour, minute };
+  return {
+    hour: Math.floor(t / SKY_HOUR_MIN),
+    min: Math.floor(t % SKY_HOUR_MIN)
+  };
 }
 
-function getPeriod(hour) {
-  if (hour < 3) return "深夜";
-  if (hour < 6) return "黎明";
-  if (hour < 10) return "清晨";
-  if (hour < 14) return "白天";
-  if (hour < 17) return "午後";
-  if (hour < 19) return "傍晚";
+function getPeriod(h) {
+  if (h < 3) return "深夜";
+  if (h < 6) return "黎明";
+  if (h < 10) return "清晨";
+  if (h < 14) return "白天";
+  if (h < 17) return "午後";
+  if (h < 19) return "傍晚";
   return "夜晚";
 }
 
-/* =========================
-   🌪 事件池（依時間變化）
-========================= */
-
+/* 事件池 */
 const eventPool = {
-  深夜: [
-    "霧氣異常凝結",
-    "海面進入靜默狀態",
-    "礦山低頻震動"
-  ],
-  黎明: [
-    "氣流開始重組",
-    "森林薄霧上升",
-    "航線逐步恢復"
-  ],
-  清晨: [
-    "市場活動開始增加",
-    "空鷹航線啟動",
-    "氣候穩定上升"
-  ],
-  白天: [
-    "貿易活動高峰",
-    "島嶼交流頻繁",
-    "氣流活躍"
-  ],
-  午後: [
-    "雲層逐漸堆積",
-    "物流出現延遲",
-    "經濟波動增加"
-  ],
-  傍晚: [
-    "航線開始收縮",
-    "海風增強",
-    "市場降溫"
-  ],
-  夜晚: [
-    "系統進入低活動狀態",
-    "氣候逐漸穩定",
-    "島嶼進入休眠"
-  ]
+  深夜: ["霧氣凝結", "海面靜默", "礦山低鳴"],
+  黎明: ["氣流重組", "森林薄霧升起", "航線恢復"],
+  清晨: ["市場開啟", "空鷹起飛", "氣候穩定"],
+  白天: ["貿易高峰", "島嶼交流", "氣流活躍"],
+  午後: ["雲層堆積", "物流延遲", "經濟波動"],
+  傍晚: ["航線收縮", "海風增強", "市場降溫"],
+  夜晚: ["系統休眠", "氣候穩定", "島嶼沉靜"]
 };
 
-/* =========================
-   🔧 工具
-========================= */
-
-function pick(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
+function pick(a) {
+  return a[Math.floor(Math.random() * a.length)];
 }
 
-/* =========================
-   🌍 世界變動（簡化版）
-========================= */
-
-function applyWorldChange(islandKey, impact) {
-  worldState[islandKey].stability += impact;
-
-  // 限制範圍
-  worldState[islandKey].stability = Math.max(
-    0,
-    Math.min(100, worldState[islandKey].stability)
-  );
+/* 世界變動 */
+function updateWorld(key) {
+  worldState[key].stability += Math.random() * 2 - 1;
+  worldState[key].stability = Math.max(0, Math.min(100, worldState[key].stability));
 }
 
-/* =========================
-   🌪 新聞生成
-========================= */
-
+/* 新聞生成 */
 function generateNews() {
-  const time = getSkyTime();
-  const period = getPeriod(time.hour);
+  const t = getSkyTime();
+  const period = getPeriod(t.hour);
 
-  const islands = Object.keys(worldState);
-
-  return islands.map((key) => {
-    const event = pick(eventPool[period]);
-
-    const impact = Math.random() * 2 - 1; // -1 ~ +1
-
-    applyWorldChange(key, impact);
+  return Object.keys(worldState).map(k => {
+    updateWorld(k);
 
     return {
-      island: worldState[key].name,
-      text: `【${period}觀測】${event}｜穩定度 ${worldState[key].stability.toFixed(1)}`
+      island: worldState[k].name,
+      text: `【${period}】${pick(eventPool[period])}｜穩定度 ${worldState[k].stability.toFixed(1)}`
     };
   });
 }
 
-/* =========================
-   ⏳ 時間顯示
-========================= */
-
-function updateTime() {
-  const el = document.getElementById("timeHint");
-  if (!el) return;
-
-  const t = getSkyTime();
-
-  el.innerText = `⏳ 空島時間：${t.hour.toString().padStart(2, "0")}:${t.minute
-    .toString()
-    .padStart(2, "0")}`;
-}
-
-/* =========================
-   🚀 UI 主入口
-========================= */
-
-function run() {
-  const output = document.getElementById("output");
+/* UI */
+function render() {
+  const el = document.getElementById("output");
+  const timeEl = document.getElementById("timeHint");
 
   const news = generateNews();
 
-  output.innerText = news
-    .map(n => `${n.island}\n${n.text}`)
-    .join("\n\n");
+  el.innerHTML = news.map(n =>
+    `<div class="card">
+      <div class="island">${n.island}</div>
+      <div class="text">${n.text}</div>
+    </div>`
+  ).join("");
 
-  updateTime();
+  const t = getSkyTime();
+  timeEl.innerText = `⏳ 空島時間 ${t.hour.toString().padStart(2,"0")}:${t.min.toString().padStart(2,"0")}`;
 }
 
-/* =========================
-   🌍 初始化
-========================= */
-
-updateTime();
-setInterval(updateTime, 1000);
-
-/* 讓 HTML 可以呼叫 */
-window.run = run;
+/* MAP核心：自動播報 */
+render();
+setInterval(render, 8000);
