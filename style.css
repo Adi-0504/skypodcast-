@@ -1,0 +1,88 @@
+body {
+  margin: 0;
+  font-family: "Arial", sans-serif;
+  background: linear-gradient(180deg, #0b1320, #1c2b3a);
+  color: #e6f1ff;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 40px;
+  margin: 0;
+}
+
+.header p {
+  opacity: 0.7;
+}
+
+/* Button */
+.controls {
+  text-align: center;
+  margin: 20px 0;
+}
+
+button {
+  background: #4fc3f7;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #001018;
+  transition: 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  background: #81d4fa;
+}
+
+/* Time */
+.time {
+  text-align: center;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+
+/* News cards */
+.news {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(79, 195, 247, 0.5);
+}
+
+.island {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.text {
+  opacity: 0.9;
+  line-height: 1.5;
+}
