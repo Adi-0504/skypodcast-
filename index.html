@@ -2,21 +2,29 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>Sky Radio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sky Radio｜空島電台</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <h1>🌍 Sky Radio</h1>
+  <div class="app">
 
-  <button onclick="run()">生成新聞</button>
+    <header class="header">
+      <h1>🌍 Sky Radio</h1>
+      <p>空島即時觀測電台</p>
+    </header>
 
-  <div id="timeHint">空島時間載入中...</div>
+    <div class="status">
+      <div id="timeHint">載入空島時間中...</div>
+      <div class="live">● LIVE</div>
+    </div>
 
-  <pre id="output"></pre>
+    <main id="output" class="news"></main>
+
+  </div>
 
   <script src="Skyradio.js"></script>
-
 </body>
 </html>
