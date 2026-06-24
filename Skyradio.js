@@ -76,6 +76,8 @@ function render() {
   const el = document.getElementById("output");
   const timeEl = document.getElementById("timeHint");
 
+  if (!el || !timeEl) return; // 🔥 防止 iPad / 載入時 crash
+
   const news = generateNews();
 
   el.innerHTML = news.map(n =>
@@ -86,9 +88,14 @@ function render() {
   ).join("");
 
   const t = getSkyTime();
-  timeEl.innerText = `⏳ 空島時間 ${t.hour.toString().padStart(2,"0")}:${t.min.toString().padStart(2,"0")}`;
+  timeEl.innerText =
+    `⏳ 空島時間 ${t.hour.toString().padStart(2,"0")}:${t.min.toString().padStart(2,"0")}`;
 }
 
-/* MAP核心：自動播報 */
-render();
-setInterval(render, 8000);
+/* 🚀 安全啟動（iPad穩定版） */
+window.addEventListener("load", () => {
+  console.log("Sky Radio loaded");
+
+  render();
+  setInterval(render, 8000);
+});
